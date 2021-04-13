@@ -10,7 +10,6 @@ import com.example.theflickrgalary.R
 import com.github.chrisbanes.photoview.PhotoView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-
 class ViewImageActivity : AppCompatActivity() {
 
     private lateinit var fab: FloatingActionButton
