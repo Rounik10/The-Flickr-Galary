@@ -5,44 +5,52 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.bumptech.glide.Glide
-import com.example.theflickrgalary.R
-import com.github.chrisbanes.photoview.PhotoView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.theflickrgalary.adapters.ViewPagerAdapter
+import com.example.theflickrgalary.databinding.ActivityViewImageBinding
+import com.example.theflickrgalary.model.Photo
+import com.example.theflickrgalary.repository.Repository
+import com.example.theflickrgalary.viewmodels.MainViewModel
+import com.example.theflickrgalary.viewmodels.MainViewModelFactory
 
 class ViewImageActivity : AppCompatActivity() {
 
-    private lateinit var fab: FloatingActionButton
-    private lateinit var photoView: PhotoView
     private lateinit var url: String
+    private lateinit var binding:ActivityViewImageBinding
+    private lateinit var viewModel:MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_view_image)
+        binding = ActivityViewImageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         supportActionBar?.hide()
 
         url = intent.getStringExtra("url").toString()
-        photoView = findViewById(R.id.photo_view)
-        Glide
-            .with(this)
-            .load(url)
-            .placeholder(R.drawable.ic_placeholder)
-            .into(photoView)
+        val position = intent.getIntExtra("position",0)
 
-        photoView.setOnViewTapListener { _: View, _: Float, _: Float ->
-            toggleFaaVisibility()
-        }
+        val fragmentList = ArrayList<Fragment>()
+        val repository = Repository()
+        val viewModelFactory = MainViewModelFactory(repository)
 
-        fab = findViewById(R.id.share_btn)
-        fab.setOnClickListener { shareImage() }
-    }
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        viewModel.getApiModel()
 
-    private fun toggleFaaVisibility() {
-        if (fab.isVisible) {
-            fab.visibility = View.GONE
-        } else {
-            fab.visibility = View.VISIBLE
-        }
+        viewModel.myResponse.observe(this, {
+            val photoList = it.photos.photo
+            for(item: Photo in photoList) {
+                fragmentList.add(ImageFragment(item.url_s))
+            }
+            val adapter = ViewPagerAdapter(
+                fragmentList,
+                supportFragmentManager,
+                lifecycle
+            )
+            binding.viewPager.adapter = adapter
+            binding.viewPager.currentItem = position
+        })
+
+        binding.shareBtn.setOnClickListener { shareImage() }
     }
 
     private fun shareImage() {

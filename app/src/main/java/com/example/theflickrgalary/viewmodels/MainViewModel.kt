@@ -8,7 +8,6 @@ import com.example.theflickrgalary.repository.Repository
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: Repository) : ViewModel() {
-
     val myResponse: MutableLiveData<ApiModel> = MutableLiveData()
 
     fun getApiModel() {

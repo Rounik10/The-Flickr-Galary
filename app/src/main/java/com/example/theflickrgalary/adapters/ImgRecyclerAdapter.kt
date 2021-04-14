@@ -37,7 +37,7 @@ class ImgRecyclerAdapter(
             .into(holder.imageView)
 
         holder.imageView.setOnClickListener {
-            clickListener.onItemClick(list[position].url_s)
+            clickListener.onItemClick(list[position], position)
         }
     }
 
@@ -47,5 +47,5 @@ class ImgRecyclerAdapter(
 }
 
 interface ImageItemClicked {
-    fun onItemClick(url:String)
+    fun onItemClick(photo: Photo, position: Int)
 }

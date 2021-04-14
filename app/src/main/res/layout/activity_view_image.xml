@@ -21,6 +21,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="25dp"
         android:src="@drawable/ic_share"
-        android:backgroundTint="#E9FFFFFF"
+        android:backgroundTint="@color/primaryColor"
         android:contentDescription="@string/share_button" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
