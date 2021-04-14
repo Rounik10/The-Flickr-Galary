@@ -2,32 +2,33 @@ package com.example.theflickrgalary.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import com.example.theflickrgalary.adapters.ViewPagerAdapter
-import com.example.theflickrgalary.databinding.ActivityViewImageBinding
+import com.example.theflickrgalary.databinding.FragmentViewImgBinding
 import com.example.theflickrgalary.model.Photo
 import com.example.theflickrgalary.repository.Repository
 import com.example.theflickrgalary.viewmodels.MainViewModel
 import com.example.theflickrgalary.viewmodels.MainViewModelFactory
 
-class ViewImageActivity : AppCompatActivity() {
+class ViewImgFragment : Fragment() {
 
-    private lateinit var url: String
-    private lateinit var binding:ActivityViewImageBinding
-    private lateinit var viewModel:MainViewModel
+    private var _binding: FragmentViewImgBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var viewModel: MainViewModel
+    private val args: ViewImgFragmentArgs by navArgs()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityViewImageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        supportActionBar?.hide()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentViewImgBinding.inflate(inflater, container, false)
 
-        url = intent.getStringExtra("url").toString()
-        val position = intent.getIntExtra("position",0)
+        val position = args.position
 
         val fragmentList = ArrayList<Fragment>()
         val repository = Repository()
@@ -36,14 +37,14 @@ class ViewImageActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         viewModel.getApiModel()
 
-        viewModel.myResponse.observe(this, {
+        viewModel.myResponse.observe(viewLifecycleOwner, {
             val photoList = it.photos.photo
-            for(item: Photo in photoList) {
+            for (item: Photo in photoList) {
                 fragmentList.add(ImageFragment(item.url_s))
             }
             val adapter = ViewPagerAdapter(
                 fragmentList,
-                supportFragmentManager,
+                requireActivity().supportFragmentManager,
                 lifecycle
             )
             binding.viewPager.adapter = adapter
@@ -51,13 +52,19 @@ class ViewImageActivity : AppCompatActivity() {
         })
 
         binding.shareBtn.setOnClickListener { shareImage() }
+        return binding.root
     }
 
     private fun shareImage() {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, "Checkout this image:\n$url")
+        intent.putExtra(Intent.EXTRA_TEXT, "Checkout this image:\n${args.url}")
         val chooser = Intent.createChooser(intent, "Share the Image Via...")
         startActivity(chooser)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

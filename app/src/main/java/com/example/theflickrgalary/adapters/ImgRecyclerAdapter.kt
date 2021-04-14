@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.theflickrgalary.R
 import com.example.theflickrgalary.model.Photo
-import com.example.theflickrgalary.view.MainActivity
 
 class ImgRecyclerAdapter(
     private val context: Context,
