@@ -15,7 +15,7 @@ import com.example.theflickrgalary.model.Photo
 
 class ImgRecyclerAdapter(
     private val context: Context,
-    private val list: List<Photo>,
+    private val list: ArrayList<Photo>,
     private val clickListener: ImageItemClicked
 ) :
     RecyclerView.Adapter<ImgRecyclerAdapter.ViewHolder>() {
@@ -55,6 +55,13 @@ class ImgRecyclerAdapter(
     override fun getItemCount(): Int {
         return list.size
     }
+
+    fun updateList(newList:List<Photo>) {
+        list.clear()
+        list.addAll(newList)
+        notifyDataSetChanged()
+    }
+
 }
 
 interface ImageItemClicked {

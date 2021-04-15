@@ -36,13 +36,20 @@ class ViewImgFragment : Fragment() {
         val viewModelFactory = MainViewModelFactory(repository)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        viewModel.getApiModel()
+        if (args.searchKey == "") viewModel.getApiModel()
+        else viewModel.getSearchResult(args.searchKey)
 
         viewModel.myResponse.observe(viewLifecycleOwner, {
             val photoList = it.photos.photo
+
             for (item: Photo in photoList) {
-                fragmentList.add(ImageFragment(item.url_s))
+                try {
+                    fragmentList.add(ImageFragment(item.url_s))
+                } catch (e: Exception) {
+                    continue
+                }
             }
+            fragmentList[position] = ImageFragment(url = args.url)
             val adapter = ViewPagerAdapter(
                 fragmentList,
                 requireActivity().supportFragmentManager,

@@ -7,4 +7,8 @@ class Repository {
     suspend fun getApiModel() : ApiModel {
         return RetrofitInstance.api.getApiModel()
     }
+
+    suspend fun getSearchResult(tags:String) : ApiModel {
+        return RetrofitInstance.api.searchImages(tags)
+    }
 }

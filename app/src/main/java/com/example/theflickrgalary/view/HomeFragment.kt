@@ -1,10 +1,9 @@
 package com.example.theflickrgalary.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -25,6 +24,8 @@ class HomeFragment : Fragment(), ImageItemClicked {
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
     private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ImgRecyclerAdapter
+    private lateinit var searchView: SearchView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +33,7 @@ class HomeFragment : Fragment(), ImageItemClicked {
     ): View {
         _binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Home"
+        setHasOptionsMenu(true)
 
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
@@ -40,6 +42,13 @@ class HomeFragment : Fragment(), ImageItemClicked {
         viewModel.getApiModel()
 
         recyclerView = binding.imageRecyclerView
+        adapter = ImgRecyclerAdapter(
+            requireContext(),
+            ArrayList(),
+            this
+        )
+        recyclerView.adapter = adapter
+
         observeApi()
 
         binding.swipeRefresh.setOnRefreshListener {
@@ -51,12 +60,7 @@ class HomeFragment : Fragment(), ImageItemClicked {
 
     private fun observeApi() {
         viewModel.myResponse.observe(viewLifecycleOwner, { response ->
-            recyclerView.adapter = ImgRecyclerAdapter(
-                requireContext(),
-                response.photos.photo,
-                this
-            )
-            binding.imageRecyclerView.adapter?.notifyDataSetChanged()
+            adapter.updateList(response.photos.photo)
         })
     }
 
@@ -66,8 +70,36 @@ class HomeFragment : Fragment(), ImageItemClicked {
     }
 
     override fun onItemClick(photo: Photo, position: Int) {
+        var text:String = ""
+        if(searchView.isActivated) {
+            text = searchView.query.toString()
+        }
         val action =
-            HomeFragmentDirections.actionHomeFragmentToViewImgFragment(photo.url_s, position)
+            HomeFragmentDirections.actionHomeFragmentToViewImgFragment(photo.url_s, position, text)
         Navigation.findNavController(binding.root).navigate(action)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.search_menu, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        searchView = searchItem.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    binding.imageRecyclerView.scrollToPosition(0)
+                    viewModel.getSearchResult(query)
+
+                    searchView.clearFocus()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
     }
 }

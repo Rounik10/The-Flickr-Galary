@@ -37,5 +37,8 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/viewImgFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="searchKey"
+            app:argType="string" />
     </fragment>
 </navigation>

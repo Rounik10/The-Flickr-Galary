@@ -16,4 +16,11 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             myResponse.value = response
         }
     }
+
+    fun getSearchResult(tags:String) {
+        viewModelScope.launch {
+            val response = repository.getSearchResult(tags)
+            myResponse.value = response
+        }
+    }
 }
