@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.theflickrgalary.R
@@ -19,6 +22,8 @@ class ImgRecyclerAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.item_image_view)
+        val cardView: CardView = itemView.findViewById(R.id.img_card)
+        val root: ConstraintLayout = itemView.findViewById(R.id.constraint_layout)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,6 +43,13 @@ class ImgRecyclerAdapter(
         holder.imageView.setOnClickListener {
             clickListener.onItemClick(list[position], position)
         }
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(holder.root)
+        constraintSet.setDimensionRatio(
+            holder.cardView.id,
+            "${list[position].width_s}:${list[position].height_s}"
+        )
+        constraintSet.applyTo(holder.root)
     }
 
     override fun getItemCount(): Int {

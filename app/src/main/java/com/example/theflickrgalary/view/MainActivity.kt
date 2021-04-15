@@ -3,6 +3,7 @@ package com.example.theflickrgalary.view
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -54,5 +55,14 @@ class MainActivity : AppCompatActivity() {
                             or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     )
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (navController.currentDestination?.id == R.id.viewImgFragment) {
+            navController.navigate(R.id.action_viewImgFragment_to_homeFragment)
+        } else if (navController.currentDestination?.id == R.id.homeFragment) {
+            return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 }

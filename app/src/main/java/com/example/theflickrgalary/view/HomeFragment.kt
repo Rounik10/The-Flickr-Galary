@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.RecyclerView
 import com.example.theflickrgalary.adapters.ImageItemClicked
 import com.example.theflickrgalary.adapters.ImgRecyclerAdapter
 import com.example.theflickrgalary.databinding.FragmentHomeBinding
@@ -21,6 +22,7 @@ class HomeFragment : Fragment(), ImageItemClicked {
     private var _binding : FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,17 +37,24 @@ class HomeFragment : Fragment(), ImageItemClicked {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         viewModel.getApiModel()
 
-        val recyclerView = binding.imageRecyclerView
+        recyclerView = binding.imageRecyclerView
+        observeApi()
 
-        viewModel.myResponse.observe(viewLifecycleOwner, { response ->
-            recyclerView.adapter = ImgRecyclerAdapter (
-                    requireContext(),
-                    response.photos.photo,
-                    this
-                )
-        })
+        binding.swipeRefresh.setOnRefreshListener {
+            observeApi()
+        }
 
         return binding.root
+    }
+
+    private fun observeApi() {
+        viewModel.myResponse.observe(viewLifecycleOwner, { response ->
+            recyclerView.adapter = ImgRecyclerAdapter(
+                requireContext(),
+                response.photos.photo,
+                this
+            )
+        })
     }
 
     override fun onDestroy() {
@@ -54,7 +63,8 @@ class HomeFragment : Fragment(), ImageItemClicked {
     }
 
     override fun onItemClick(photo: Photo, position: Int) {
-        val action = HomeFragmentDirections.actionHomeFragmentToViewImgFragment(photo.url_s, position)
+        val action =
+            HomeFragmentDirections.actionHomeFragmentToViewImgFragment(photo.url_s, position)
         Navigation.findNavController(binding.root).navigate(action)
     }
 }

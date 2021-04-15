@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_viewImgFragment"
-            app:destination="@id/viewImgFragment" />
+            app:destination="@id/viewImgFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/viewImgFragment"
@@ -25,5 +27,10 @@
         <argument
             android:name="position"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_viewImgFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/viewImgFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
