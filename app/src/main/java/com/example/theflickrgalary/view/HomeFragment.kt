@@ -70,7 +70,7 @@ class HomeFragment : Fragment(), ImageItemClicked {
     }
 
     override fun onItemClick(photo: Photo, position: Int) {
-        var text:String = ""
+        var text = ""
         if(searchView.isActivated) {
             text = searchView.query.toString()
         }
