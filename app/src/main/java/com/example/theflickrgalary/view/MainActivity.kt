@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Suppress("DEPRECATION")
-    private fun enableFullScreen() {
+    fun enableFullScreen() {
         Handler(Looper.myLooper()!!).post {
             window.decorView.systemUiVisibility = (
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION

@@ -88,10 +88,10 @@ class HomeFragment : Fragment(), ImageItemClicked {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                (requireActivity() as MainActivity).enableFullScreen()
                 if (query != null) {
                     binding.imageRecyclerView.scrollToPosition(0)
                     viewModel.getSearchResult(query)
-
                     searchView.clearFocus()
                 }
                 return true
