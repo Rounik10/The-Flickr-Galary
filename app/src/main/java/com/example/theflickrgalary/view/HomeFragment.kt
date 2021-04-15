@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -26,6 +27,7 @@ class HomeFragment : Fragment(), ImageItemClicked {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Home"
 
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)

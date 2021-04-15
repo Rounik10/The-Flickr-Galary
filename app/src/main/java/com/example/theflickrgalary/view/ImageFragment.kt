@@ -1,9 +1,12 @@
 package com.example.theflickrgalary.view
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -27,7 +30,7 @@ class ImageFragment(private val url:String) : Fragment() {
                 .placeholder(R.drawable.ic_placeholder)
                 .into(binding.photoView)
         }
-        binding.photoView.setOnViewTapListener { view: View, fl: Float, fl1: Float ->
+        binding.photoView.setOnViewTapListener { _: View, _: Float, _: Float ->
             toggleFabVisibility()
         }
         return binding.root
@@ -35,10 +38,13 @@ class ImageFragment(private val url:String) : Fragment() {
 
     private fun toggleFabVisibility() {
         val fab = activity?.findViewById<FloatingActionButton>(R.id.share_btn)!!
+        val actionBar = (requireActivity() as AppCompatActivity)
         if (fab.isVisible) {
             fab.visibility = View.GONE
+            actionBar.supportActionBar?.hide()
         } else {
             fab.visibility = View.VISIBLE
+            actionBar.supportActionBar?.show()
         }
     }
 

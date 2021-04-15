@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
@@ -27,9 +28,9 @@ class ViewImgFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentViewImgBinding.inflate(inflater, container, false)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "View Image"
 
         val position = args.position
-
         val fragmentList = ArrayList<Fragment>()
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
