@@ -8,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.theflickrgalary.R
 import com.example.theflickrgalary.adapters.ImageItemClicked
 import com.example.theflickrgalary.adapters.ImgRecyclerAdapter
 import com.example.theflickrgalary.databinding.FragmentHomeBinding
@@ -41,7 +43,7 @@ class HomeFragment : Fragment(), ImageItemClicked {
         observeApi()
 
         binding.swipeRefresh.setOnRefreshListener {
-            observeApi()
+            findNavController().navigate(R.id.action_homeFragment_self)
         }
 
         return binding.root
@@ -54,6 +56,7 @@ class HomeFragment : Fragment(), ImageItemClicked {
                 response.photos.photo,
                 this
             )
+            binding.imageRecyclerView.adapter?.notifyDataSetChanged()
         })
     }
 

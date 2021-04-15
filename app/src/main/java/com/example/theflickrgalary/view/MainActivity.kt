@@ -65,4 +65,10 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
+    override fun onBackPressed() {
+        if(navController.currentDestination?.id == R.id.homeFragment) super.onBackPressed()
+        else navController.navigate(R.id.action_viewImgFragment_to_homeFragment)
+    }
+
 }
