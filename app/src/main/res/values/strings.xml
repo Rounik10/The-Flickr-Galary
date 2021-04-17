@@ -7,7 +7,11 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="home">Home</string>
     <string name="view_image">View Image</string>
-    <string name="search">Search</string>
     <string name="can_t_load_images">Can\'t Load Images!</string>
     <string name="retry">Retry</string>
+    <string name="search">Search</string>
+    <string name="search_for_some_images">Search for Some Images!</string>
+    <string name="unable_to_load_images">Unable to load images</string>
+    <string name="item_not_found">No result found, please try to search something else</string>
+    <string name="asset_search_image">Asset Search Image</string>
 </resources>

@@ -58,17 +58,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (navController.currentDestination?.id == R.id.viewImgFragment) {
-            navController.navigate(R.id.action_viewImgFragment_to_homeFragment)
-        } else if (navController.currentDestination?.id == R.id.homeFragment) {
-            return super.onOptionsItemSelected(item)
+        when (navController.currentDestination?.id){
+            R.id.homeFragment -> {
+                return super.onOptionsItemSelected(item)
+            }
+            R.id.viewImgFragment -> {
+                navController.popBackStack()
+            }
+            R.id.searchFragment -> {
+                if(item.itemId != R.id.action_search) {
+                    navController.navigate(R.id.action_searchFragment_to_homeFragment)
+                }
+            }
         }
         return true
     }
 
     override fun onBackPressed() {
-        if(navController.currentDestination?.id == R.id.homeFragment) super.onBackPressed()
-        else navController.navigate(R.id.action_viewImgFragment_to_homeFragment)
+        when (navController.currentDestination?.id) {
+            R.id.homeFragment -> {
+                super.onBackPressed()
+            }
+            R.id.viewImgFragment -> {
+                navController.popBackStack()
+            }
+            R.id.searchFragment -> {
+                navController.navigate(R.id.action_searchFragment_to_homeFragment)
+            }
+        }
     }
-
 }
