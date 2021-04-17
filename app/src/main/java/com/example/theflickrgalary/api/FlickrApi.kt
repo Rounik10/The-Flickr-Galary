@@ -22,7 +22,8 @@ interface FlickrApi {
     @GET("?method=flickr.photos.search&api_key=6f102c62f41998d151e5a1b48713cf13&format=json&nojsoncallback=1&extras=url_s")
     suspend fun searchImages(
         @Query("text") query: String,
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
     ) : ApiModel
 
 }

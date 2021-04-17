@@ -15,7 +15,7 @@ class FlickrPagingSource(
         return try {
             val response =
                 if (query == "recent") flickrApi.getApiModel(position)
-                else flickrApi.searchImages(query, position)
+                else flickrApi.searchImages(query, position, 20)
             val photos = response.photos.photo
 
             LoadResult.Page(

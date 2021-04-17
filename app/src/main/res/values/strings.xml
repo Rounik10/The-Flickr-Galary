@@ -8,4 +8,6 @@
     <string name="home">Home</string>
     <string name="view_image">View Image</string>
     <string name="search">Search</string>
+    <string name="can_t_load_images">Can\'t Load Images!</string>
+    <string name="retry">Retry</string>
 </resources>

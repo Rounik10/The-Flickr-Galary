@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.theflickrgalary.R
+import com.example.theflickrgalary.adapters.FlickrLoadStateAdapter
 import com.example.theflickrgalary.adapters.PagingAdapter
 import com.example.theflickrgalary.adapters.RecyclerItemClicked
 import com.example.theflickrgalary.databinding.FragmentHomeBinding
@@ -19,6 +20,7 @@ import com.example.theflickrgalary.model.Photo
 import com.example.theflickrgalary.repository.Repository
 import com.example.theflickrgalary.viewmodels.MainViewModel
 import com.example.theflickrgalary.viewmodels.MainViewModelFactory
+import kotlinx.coroutines.handleCoroutineException
 
 class HomeFragment : Fragment(), RecyclerItemClicked {
 
@@ -44,7 +46,10 @@ class HomeFragment : Fragment(), RecyclerItemClicked {
 
         recyclerView = binding.imageRecyclerView
         adapter = PagingAdapter(this)
-        recyclerView.adapter = adapter
+        recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = FlickrLoadStateAdapter { adapter.retry() },
+            footer = FlickrLoadStateAdapter { adapter.retry() }
+        )
 
         observeApi()
 

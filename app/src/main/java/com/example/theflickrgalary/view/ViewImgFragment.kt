@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -31,18 +30,16 @@ class ViewImgFragment : Fragment() {
         _binding = FragmentViewImgBinding.inflate(inflater, container, false)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "View Image"
 
-        val position = args.position
         val fragmentList = ArrayList<Fragment>()
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
-
-        Toast.makeText(context, args.searchKey, Toast.LENGTH_SHORT).show()
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         viewModel.getApiModel()
 
         viewModel.myResponse.observe(viewLifecycleOwner, {
             val photoList = it.photos.photo
+            val position = photoList.size / 2
 
             for (item in photoList) {
                 try {
