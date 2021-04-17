@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.theflickrgalary.R
 import com.example.theflickrgalary.model.Photo
 
@@ -37,6 +38,7 @@ class ImgRecyclerAdapter(
         Glide
             .with(context)
             .load(url)
+            .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(R.drawable.ic_placeholder)
             .into(holder.imageView)
 

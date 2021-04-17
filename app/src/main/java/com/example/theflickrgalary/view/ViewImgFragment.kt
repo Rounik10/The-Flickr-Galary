@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.example.theflickrgalary.adapters.ViewPagerAdapter
 import com.example.theflickrgalary.databinding.FragmentViewImgBinding
-import com.example.theflickrgalary.model.Photo
 import com.example.theflickrgalary.repository.Repository
 import com.example.theflickrgalary.viewmodels.MainViewModel
 import com.example.theflickrgalary.viewmodels.MainViewModelFactory
@@ -20,6 +20,7 @@ class ViewImgFragment : Fragment() {
 
     private var _binding: FragmentViewImgBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var viewModel: MainViewModel
     private val args: ViewImgFragmentArgs by navArgs()
 
@@ -35,14 +36,15 @@ class ViewImgFragment : Fragment() {
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
 
+        Toast.makeText(context, args.searchKey, Toast.LENGTH_SHORT).show()
+
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        if (args.searchKey == "") viewModel.getApiModel()
-        else viewModel.getSearchResult(args.searchKey)
+        viewModel.getApiModel()
 
         viewModel.myResponse.observe(viewLifecycleOwner, {
             val photoList = it.photos.photo
 
-            for (item: Photo in photoList) {
+            for (item in photoList) {
                 try {
                     fragmentList.add(ImageFragment(item.url_s))
                 } catch (e: Exception) {

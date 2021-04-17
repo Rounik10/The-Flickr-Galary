@@ -1,5 +1,7 @@
 package com.example.theflickrgalary.model
 
+import com.example.theflickrgalary.api.FlickrApi
+
 data class Photo (
     val id: String,
     val owner: String,

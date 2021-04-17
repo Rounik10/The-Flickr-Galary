@@ -1,8 +1,6 @@
 package com.example.theflickrgalary.view
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.theflickrgalary.R
 import com.example.theflickrgalary.databinding.FragmentImageBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -28,6 +27,7 @@ class ImageFragment(private val url:String) : Fragment() {
             Glide.with(it)
                 .load(url)
                 .placeholder(R.drawable.ic_placeholder)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.photoView)
         }
         binding.photoView.setOnViewTapListener { _: View, _: Float, _: Float ->

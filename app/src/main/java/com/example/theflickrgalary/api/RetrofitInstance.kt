@@ -1,5 +1,7 @@
 package com.example.theflickrgalary.api
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import com.example.theflickrgalary.util.Constants.Companion.BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
