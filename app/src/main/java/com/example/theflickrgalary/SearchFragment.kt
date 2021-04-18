@@ -18,6 +18,17 @@ import com.example.theflickrgalary.repository.Repository
 import com.example.theflickrgalary.view.MainActivity
 import com.example.theflickrgalary.viewmodels.MainViewModel
 import com.example.theflickrgalary.viewmodels.MainViewModelFactory
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableOnSubscribe
+import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
+
 
 class SearchFragment : Fragment(), RecyclerItemClicked {
 
@@ -26,6 +37,7 @@ class SearchFragment : Fragment(), RecyclerItemClicked {
     private lateinit var viewModel: MainViewModel
     private lateinit var searchView: SearchView
     private lateinit var adapter: PagingAdapter
+    private val disposables = CompositeDisposable()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,31 +92,86 @@ class SearchFragment : Fragment(), RecyclerItemClicked {
         _binding = null
     }
 
+    private fun debounceSearch(searchView: SearchView) {
+        var uiHidden = false
+        var prevQuery = ""
+        val observableQueryText: Observable<String?> = Observable
+            .create(ObservableOnSubscribe<String?> { emitter ->
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        searchView.clearFocus()
+                        updateFullScreen()
+                        if(query == prevQuery) return true
+                        else prevQuery = query
+
+                        if (!emitter.isDisposed) {
+                            emitter.onNext(query)
+                        }
+                        return true
+                    }
+
+                    override fun onQueryTextChange(newText: String): Boolean {
+                        if(newText == prevQuery) return true
+                        else prevQuery = newText
+                        if (!emitter.isDisposed) {
+                            emitter.onNext(newText) // Pass the query to the emitter
+                        }
+                        if (!uiHidden) {
+                            hideUi()
+                            uiHidden = true
+                        }
+                        return true
+                    }
+                })
+            })
+            .debounce(800, TimeUnit.MILLISECONDS) // Apply Debounce() operator to limit requests
+            .subscribeOn(Schedulers.io())
+
+        observableQueryText.subscribe(object : Observer<String?> {
+            override fun onSubscribe(d: Disposable?) {
+                disposables.add(d)
+            }
+
+            override fun onError(e: Throwable?) {
+                e?.printStackTrace()
+            }
+
+            override fun onComplete() {}
+
+            override fun onNext(text: String?) {
+                if (text != null) {
+                    GlobalScope.launch(Dispatchers.Main) {
+                        viewModel.getPagedResults(text)
+                        loadData()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun updateFullScreen() {
+        (requireActivity() as MainActivity).enableFullScreen()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.clear()
+    }
+
+    private fun hideUi() {
+        binding.apply {
+            searchSomething.visibility = View.GONE
+            searchLogo.visibility = View.GONE
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.search_menu, menu)
 
         val searchItem = menu.findItem(R.id.action_search)
         searchView = searchItem.actionView as SearchView
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                (requireActivity() as MainActivity).enableFullScreen()
-                if (query != null) {
-                    binding.searchRecycler.scrollToPosition(0)
-                    viewModel.getPagedResults(query)
-                    searchView.clearFocus()
-                    binding.searchSomething.visibility = View.GONE
-                    binding.searchLogo.visibility = View.GONE
-                }
-                loadData()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
-            }
-        })
+        debounceSearch(searchView)
         searchView.queryHint = "Search Here"
         searchView.requestFocus()
     }
